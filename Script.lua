@@ -10,14 +10,9 @@ local mousetweeninfo = TweenInfo.new(0.2,Enum.EasingStyle.Linear, Enum.EasingDir
 local disablegui = tweenservice:Create(ui, maintween, {Enabled = false})
 local disableblur = tweenservice:Create(game.Lighting.Blur, maintween, {Size = 0})
 local players = game.Players:GetPlayers()
-local randomindexplayer = math.random(#players)
-local randomplayer = players[randomindexplayer]
 local index = 1
 local playertospecate = players[index]
-print(players)
-print(randomindexplayer)
-print(randomplayer)
-print(#players)
+local max = #players
 game.ReplicatedStorage.DiedEvent.OnClientEvent:Connect(function(plr)
 	print("died")
 	local enableuitween = tweenservice:Create(ui, maintween, {Enabled = true})
@@ -58,36 +53,62 @@ ui.SpectateBtn.MouseButton1Click:Connect(function(plr)
 		camera.CFrame = CFrame.new(pos,lookat)
 	end)
 	playergui:WaitForChild("SpectatingGui").NextBtn.MouseButton1Click:Connect(function(plr) 
-		playertospecate = players[index]
-		camera.CameraType = Enum.CameraType.Follow
-		camera.CameraSubject = playertospecate.Character:WaitForChild("Humanoid")
-		index = index + 1
 		print(playertospecate)
-		print(index)
-		if index > #players then
-			index -= 1
-			print(index)
+		playertospecate = players[index]
+		if playertospecate == player then
+			index +=  1
+			playertospecate = players[index]
+			camera.CameraType = Enum.CameraType.Follow
+			camera.CameraSubject = playertospecate.Character:WaitForChild("Humanoid")
+
+			if index > #players then
+				index = 1
+
+			end
+		else
+			
+			camera.CameraType = Enum.CameraType.Follow
+			camera.CameraSubject = playertospecate.Character:WaitForChild("Humanoid")
+			index +=  1
+			if index > #players then
+				index = 1
+
+			end
 		end
-		print(#players)
 	end)
-	playergui:WaitForChild("SpectatingGui").BackBtn.MouseButton1Click:Connect(function(plr) 
+	playergui:WaitForChild("SpectatingGui").BackBtn.MouseButton1Click:Connect(function(plr)
 		playertospecate = players[index]
-		camera.CameraType = Enum.CameraType.Follow
-		camera.CameraSubject = playertospecate.Character:WaitForChild("Humanoid")
-		index = index - 1
-		print(playertospecate)
-		print(index)
-		if index < 1 then
+		if playertospecate == player then
 			index += 1
-			print(index)
+			playertospecate = players[index]
+			camera.CameraType = Enum.CameraType.Follow
+			camera.CameraSubject = playertospecate.Character:WaitForChild("Humanoid")
+
+
+			if index < 1 then
+				index = 1
+
+			end
+
+			camera.CameraType = Enum.CameraType.Follow
+			camera.CameraSubject = playertospecate.Character:WaitForChild("Humanoid")
+		else 
+			camera.CameraType = Enum.CameraType.Follow
+			camera.CameraSubject = playertospecate.Character:WaitForChild("Humanoid")
+			index -= 1
+
+			if index < 1 then
+				index = 1
+
+			end
+
+			camera.CameraType = Enum.CameraType.Follow
+			camera.CameraSubject = playertospecate.Character:WaitForChild("Humanoid")
 		end
-		print(#players)
+
+		
 	end)
-	index += 1
-	camera.CameraType = Enum.CameraType.Follow
-	camera.CameraSubject = playertospecate.Character:WaitForChild("Humanoid")
-	print(playertospecate)
-	
+
 end)
 ui.RespawnBtn.MouseEnter:Connect(function(x, y)
 	local mouseentertween = tweenservice:Create(ui.RespawnBtn, mousetweeninfo, {Size = UDim2.new(0.190,0,0.140,0)})
@@ -105,12 +126,3 @@ ui.SpectateBtn.MouseLeave:Connect(function(x, y)
 	local mouseleavetween = tweenservice:Create(ui.SpectateBtn, mousetweeninfo, {Size = UDim2.new(0.182,0,0.113,0)})
 	mouseleavetween:Play()
 end)
-while wait() do
-	if index > #players then
-		index -= 1
-		print(index)
-	elseif index < 1 then
-		index += 1
-		print(index)
-	end
-end
